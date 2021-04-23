@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Cour2;
 use App\Entity\Formation;
@@ -12,6 +12,8 @@ use App\Repository\participantsRepository;
 use App\Repository\utilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,6 +31,7 @@ class FormationcrudController extends AbstractController
         ]);
     }
 
+
     /**
      * @param Request $request
      * @return Response
@@ -42,13 +45,15 @@ class FormationcrudController extends AbstractController
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
+
+
             $em=$this->getDoctrine()->getManager();
             $em->persist($formation);
             $em->flush();
             return $this->redirectToRoute('ajoutcour');
 
         }
-        return $this->render('formationcrud/Ajouterformation.html.twig',[
+        return $this->render('admin/formationcrud/Ajouterformation.html.twig',[
             'form'=>$form->createView()
         ]);
     }
@@ -66,13 +71,26 @@ class FormationcrudController extends AbstractController
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
+           /** @var UploadedFile $uploadedFile */
+           $uploadedFile=$form['extension']->getData();
+            $originalFilename = pathinfo($uploadedFile->getClientOriginalName().".pdf", PATHINFO_FILENAME);
+            $cour->setExtension($originalFilename);
+
+            /** @var UploadedFile $uploadedFilei */
+            $uploadedFilei=$form['image']->getData();
+            $originalFilenamei = pathinfo($uploadedFilei->getClientOriginalName().".".$uploadedFilei->getExtension(), PATHINFO_FILENAME);
+            $cour->setImage($originalFilenamei);
+
+
+
+
             $em=$this->getDoctrine()->getManager();
             $em->persist($cour);
             $em->flush();
-            return $this->redirectToRoute('formationc');
+            return $this->redirectToRoute('upf');
 
         }
-        return $this->render('formationcrud/Ajoutercour.html.twig',[
+        return $this->render('admin/formationcrud/Ajoutercour.html.twig',[
             'formc'=>$form->createView()
         ]);
     }
@@ -86,7 +104,7 @@ class FormationcrudController extends AbstractController
         $formation = $repof->findAll();
 
 
-        return $this->render('formationcrud/upanddeletform.html.twig',
+        return $this->render('admin/formationcrud/upanddeletform.html.twig',
             ['formation'=>$formation]);
     }
 
@@ -124,7 +142,7 @@ class FormationcrudController extends AbstractController
             return $this->redirectToRoute("upf");
 
         }
-        return $this->render('formationcrud/Updatef.html.twig',[
+        return $this->render('admin/formationcrud/Updatef.html.twig',[
             'upform'=>$form->createView()
 
         ]);
@@ -141,7 +159,7 @@ class FormationcrudController extends AbstractController
         $cour = $repoc2->findBy(['idf'=>$id]);
 
 
-        return $this->render('formationcrud/updateanddeletecour.html.twig',
+        return $this->render('admin/formationcrud/updateanddeletecour.html.twig',
             ['cour'=>$cour]);
     }
 
@@ -179,7 +197,7 @@ class FormationcrudController extends AbstractController
             return $this->redirectToRoute("upf");
 
         }
-        return $this->render('formationcrud/UpdateC.html.twig',[
+        return $this->render('admin/formationcrud/UpdateC.html.twig',[
             'upcour'=>$form->createView()
 
         ]);
@@ -198,10 +216,11 @@ class FormationcrudController extends AbstractController
         $Participant=$repopar->listparticipantparformation(3);
 
 
-        return $this->render('participants/Listparticipant.html.twig',
+        return $this->render('participants/tableparticipant.html.twig',
             ['Participant'=>$Participant]);
 
     }
+
 
 
 }

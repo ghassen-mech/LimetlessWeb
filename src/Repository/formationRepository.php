@@ -59,13 +59,20 @@ class formationRepository extends ServiceEntityRepository
             ->setParameter('idf',$idf)
             ->getQuery()->getResult();
     }
-
+//Sta3milthe fi tri
     public function OrderById(){
         $em=$this->getEntityManager();
         $query=$em->createQuery(
-            'select f from App\Entity\Formation f where f.id=3'
+            'select f from App\Entity\Formation f ORDER BY f.id desc'
             //'select f from App\Entity\Formation f where f.id= (select p.idformation from App\Entity\Participants p where p.idclient=3)'
         );
+        return $query->getResult();
+    }
+    public function mesformations($id){
+        $em=$this->getEntityManager();
+        $query=$em->createQuery('select f from App\Entity\Formation f where f.id IN 
+        (SELECT IDENTITY(p.idformation) from App\Entity\Participants p where p.idclient=:id )ORDER BY f.date asc')
+            ->setParameter('id',$id);
         return $query->getResult();
     }
 }

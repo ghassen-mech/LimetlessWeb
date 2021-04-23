@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Formation
@@ -23,21 +24,26 @@ class Formation
 
     /**
      * @var string
-     *
+     *@Assert\NotBlank(message="Le champs est vide : Ajouter un sujet ")
      * @ORM\Column(name="sujet", type="string", length=100, nullable=false)
      */
     private $sujet;
 
     /**
      * @var \DateTime
-     *
+     *@Assert\GreaterThan("today",message="La date du formation doit etre aprés le :{{ compared_value }}")
      * @ORM\Column(name="date", type="date", nullable=false)
      */
     private $date;
 
     /**
      * @var string
-     *
+     * @Assert\Length(
+     *      min = 5,
+     *      max = 50,
+     *      minMessage = "La description doit etre au minimum {{ limit }} characters ",
+     *      maxMessage = "La description doit etre au maximum {{ limit }} characters"
+     * )
      * @ORM\Column(name="description", type="string", length=500, nullable=false)
      */
     private $description;
@@ -101,6 +107,8 @@ class Formation
 
         return $this;
     }
+
+
 
 
 }

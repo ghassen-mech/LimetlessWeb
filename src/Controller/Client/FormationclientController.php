@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Client;
 
 use App\Entity\Formation;
+use App\Entity\Participants;
+use App\Entity\Utilisateur;
 use App\Repository\cour2Repository;
 use App\Repository\courRepository;
 use App\Repository\formationRepository;
 use App\Repository\participantsRepository;
+use App\Repository\utilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,10 +35,10 @@ class FormationclientController extends AbstractController
      */
 
     public function Afficheformation(formationRepository $repo){
-        $formation = $repo->findAll();
+        $formation = $repo->OrderById();
 
 
-        return $this->render('formationclient/formation.html.twig',
+        return $this->render('client/formationclient/formation.html.twig',
             ['formation'=>$formation]);
 
     }
@@ -49,7 +52,7 @@ class FormationclientController extends AbstractController
 
 
         $formation=$repo->OrderByidQB();
-        return $this->render('formationclient/formation.html.twig',
+        return $this->render('client/formationclient/formation.html.twig',
             ['formation'=>$formation]);
 
     }
@@ -65,7 +68,7 @@ class FormationclientController extends AbstractController
 
         $formation=$repo->OrderByidform($participants->getIdformation());
 
-        return $this->render('formationclient/formation.html.twig',
+        return $this->render('client/formationclient/formation.html.twig',
             ['formationt'=>$formation]);
 
     }
@@ -76,7 +79,7 @@ class FormationclientController extends AbstractController
      */
     public function Afficheformationclientt2(formationRepository $repo){
       $formation=$repo->OrderById();
-        return $this->render('formationclient/formation.html.twig',
+        return $this->render('client/formationclient/formation.html.twig',
             ['formationt'=>$formation]);
 
     }
@@ -94,10 +97,32 @@ class FormationclientController extends AbstractController
 
 
 
-        return $this->render('formationclient/cour.html.twig',
+        return $this->render('client/formationclient/cour.html.twig',
             ['cour'=>$cour
             ]
         );
+
+    }
+
+    /**
+     * @param $id
+     * @return Response
+     * @Route ("/client/participer/{id}",name="participerf")
+     */
+    public function Participer_formation($id,participantsRepository $rpp){
+        $participant=new Participants();
+        $idclient = $this->getDoctrine()->getRepository(Utilisateur::class)->find(3);//het lid ye l3ajngui
+        $idformation = $this->getDoctrine()->getRepository(Formation::class)->find($id);
+
+        $participant->setIdformation($idformation);
+        $participant->setIdclient($idclient);
+       // $participant=$rpp->findBy(['idformation'=>$id]);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($participant);
+        $em->flush();
+
+        return $this->redirectToRoute('formationc');
 
     }
 

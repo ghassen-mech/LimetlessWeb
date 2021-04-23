@@ -108,6 +108,14 @@ class Utilisateur
         return $this->nom;
     }
 
+    /**
+     * @param int $idUtilisateur
+     */
+    public function setIdUtilisateur(int $idUtilisateur): void
+    {
+        $this->idUtilisateur = $idUtilisateur;
+    }
+
     public function setNom(string $nom): self
     {
         $this->nom = $nom;
