@@ -1,0 +1,51 @@
+{% extends 'admin/index.html.twig' %}
+{% block body %}
+    {{ form_start(formc) }}
+
+
+    {{ form_end(formc) }}
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+        </div>
+
+        <div class="col-sm-12 col-md-6"><div id="dataTable_filter" class="dataTables_filter">
+                <label>Formation:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="dataTable">
+                </label></div></div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                {% block part %}
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <tr>
+                            <th>Name</th>
+                            <th>Prenom</th>
+                            <th>E-mail</th>
+
+                        </tr>
+                        {% for p in participantf %}
+
+
+                            <tr>
+                                <th>{{ p.nom}}</th>
+                                <th>{{ p.prenom}}</th>
+                                <th>{{ p.email}}</th>
+
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endblock %}
+
+            </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+
+            <a href="#" class="get-started-btn">Imprimer</a>
+
+        </div>
+    </div>
+
+
+{% endblock %}
