@@ -38,11 +38,13 @@ class ListparticipantsController extends AbstractController
 
     /**
      * @param Request $request
-     * @param utilisateurRepository $prp
+
+     * @param participantsRepository $prep
+     * @param formationRepository $frep
      * @return Response
      * @Route ("admin/listparticipantst",name="listPt")
      */
-    public function testformation(Request $request,utilisateurRepository $prp,participantsRepository $prep,formationRepository $frep)
+    public function testformation(Request $request,participantsRepository $prep,formationRepository $frep)
     {
         $part =new Participants();
         $form=$this->createForm(ParticipantsType::class,$part);
@@ -53,9 +55,10 @@ class ListparticipantsController extends AbstractController
 
             return $this->redirectToRoute('listPt');
         }
+
         //$participant=$prp->findAll();
 
-        $u = $form["idformation"]->getData();
+       // $u = $form["idformation"]->getData();
 
         $participant=$prep->listpartici(3);
 
@@ -71,7 +74,8 @@ class ListparticipantsController extends AbstractController
 
         return $this->render('admin/participants/tableparticipant.html.twig',[
         'formc'=>$form->createView(),
-            'participantf'=>$participant
+            'participantf'=>$participant,
+
 
         ]);
     }
@@ -91,6 +95,8 @@ class ListparticipantsController extends AbstractController
         //$u = $form["idformation"]->getData();
 
         //$formations=$frep->find(3);
+        $sujetf=$frep->find($id);
+
 
         $participant=$prep->listpartici($id);
 
@@ -107,7 +113,39 @@ class ListparticipantsController extends AbstractController
         return $this->render('admin/participants/tableparticipant.html.twig',[
             'formc'=>$form->createView(),
 
-            'participantf'=>$participant
+            'participantf'=>$participant,
+            'sujetf'=>$sujetf
+        ]);
+
+
+    }
+
+    /**
+     * @Route ("/admin/statis",name="sta")
+     */
+    public function statistique(participantsRepository $partrep,formationRepository $frep){
+
+        $test=$partrep->countByidformation();
+
+
+        $nbrp=[];
+
+        $sujetf=[];
+        foreach ($test as $part){
+            $nbrp[]=$part['nbrp'];
+            $formationid=$part['idformation'];
+            $formation=$partrep->sujetformation($formationid);
+            foreach ($formation as $f) {
+                $sujetf[] = $f['s'];
+            }
+
+        }
+
+
+        return $this->render('admin/participants/statistique.html.twig',[
+            'idformation'=>json_encode($sujetf),
+            'countparticipants'=>json_encode($nbrp)
+
         ]);
 
 

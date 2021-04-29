@@ -38,7 +38,7 @@ class MesformationController extends AbstractController
      * @param formationRepository $repo
      * @param $id
      * @return Response
-     * @Route ("client/mesformation/detail{id}",name="detail")
+     * @Route ("client/mesformation/detail/{id}",name="detail")
      */
     public function Afficheformation_detail(formationRepository $repo,$id,participantsRepository $rpp){
         $formation = $repo->find($id);//het l id ye 3ajngui

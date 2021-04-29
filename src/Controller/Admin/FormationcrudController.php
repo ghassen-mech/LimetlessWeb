@@ -107,6 +107,25 @@ class FormationcrudController extends AbstractController
         return $this->render('admin/formationcrud/upanddeletform.html.twig',
             ['formation'=>$formation]);
     }
+    /**
+     * @param formationRepository $repo
+     * @param Request $request
+     * @return Response
+     * @Route("/client/Aaffcihefr",name="Aformationcr")
+     */
+
+    public function AfficheformatiornAdmin(formationRepository $repo,Request $request){
+
+        $data=$request->get('sujet');
+        if($data == "Tout"){
+            $formation = $repo->OrderById();
+        }else
+            $formation=$repo->findBy(['sujet'=>$data]);
+
+        return $this->render('admin/formationcrud/upanddeletform.html.twig',
+            ['formation'=>$formation]);
+
+    }
 
     /**
      * @param $id
@@ -220,6 +239,7 @@ class FormationcrudController extends AbstractController
             ['Participant'=>$Participant]);
 
     }
+
 
 
 

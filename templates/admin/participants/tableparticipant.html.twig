@@ -1,18 +1,12 @@
 {% extends 'admin/index.html.twig' %}
 {% block body %}
-    {{ form_start(formc) }}
-
-
-    {{ form_end(formc) }}
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Liste des participants de la formation : {{ sujetf.sujet }}</h6>
         </div>
 
-        <div class="col-sm-12 col-md-6"><div id="dataTable_filter" class="dataTables_filter">
-                <label>Formation:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="dataTable">
-                </label></div></div>
+
 
         <div class="card-body">
             <div class="table-responsive">
@@ -42,7 +36,7 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
 
 
-            <a href="#" class="get-started-btn">Imprimer</a>
+            <a href="#" onClick="window.print()" class="get-started-btn">Imprimer</a>
 
         </div>
     </div>

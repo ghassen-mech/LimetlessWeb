@@ -34,6 +34,23 @@ class participantsRepository extends ServiceEntityRepository
             ->setParameter('id',$id);
         return $query->getResult();
     }
+    public function countByidformation(){
+        $em=$this->getEntityManager();
+      $query=$em->createQuery('select IDENTITY(p.idformation) idformation, count(p) nbrp from App\Entity\Participants p GROUP BY p.idformation ');
+
+       return $query->getResult();
+
+
+    }
+    public function sujetformation($id){
+        $em=$this->getEntityManager();
+        $query=$em->createQuery('select f.sujet s from App\Entity\Formation f where f.id=:id')
+        ->setParameter('id',$id);
+
+        return $query->getResult();
+
+
+    }
 
 
     // /**

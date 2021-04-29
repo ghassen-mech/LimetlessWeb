@@ -75,4 +75,5 @@ class formationRepository extends ServiceEntityRepository
             ->setParameter('id',$id);
         return $query->getResult();
     }
+
 }

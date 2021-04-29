@@ -4,15 +4,20 @@ namespace App\Controller\Client;
 
 use App\Entity\Formation;
 use App\Entity\Participants;
+use App\Entity\PropretySearch;
 use App\Entity\Utilisateur;
+use App\Form\PropretySearchType;
 use App\Repository\cour2Repository;
 use App\Repository\courRepository;
 use App\Repository\formationRepository;
 use App\Repository\participantsRepository;
 use App\Repository\utilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 /**
  * @method getEntityManager()
@@ -28,15 +33,48 @@ class FormationclientController extends AbstractController
             'controller_name' => 'FormationclientController',
         ]);
     }
+
     /**
      * @param formationRepository $repo
+     * @param Request $request
      * @return Response
      * @Route("/client/affcihef",name="formationc")
      */
 
-    public function Afficheformation(formationRepository $repo){
-        $formation = $repo->OrderById();
+    public function Afficheformation(formationRepository $repo,Request $request){
+        $search = new PropretySearch();
+        $form=$this->createForm(PropretySearchType::class,$search);
+        $form->handleRequest($request);
 
+        $formation = $repo->OrderById();
+        $articles=[];
+        if($form->isSubmitted()&& $form->isValid()){
+            $sujet=$search->getSujet();
+            if($sujet!="")
+                $formation=$this->getDoctrine()->getRepository(Formation::class)->findBy(['sujet'=>$sujet]);
+            else
+                $formation = $repo->OrderById();
+        }
+        return $this->render('client/formationclient/formation.html.twig',
+            ['formation'=>$formation,
+            'formS'=>$form->createView()
+            ]);
+
+    }
+    /**
+     * @param formationRepository $repo
+     * @param Request $request
+     * @return Response
+     * @Route("/client/affcihefr",name="formationcr")
+     */
+
+    public function Afficheformatiorn(formationRepository $repo,Request $request){
+
+        $data=$request->get('sujet');
+        if($data == "Tout"){
+            $formation = $repo->OrderById();
+        }else
+        $formation=$repo->findBy(['sujet'=>$data]);
 
         return $this->render('client/formationclient/formation.html.twig',
             ['formation'=>$formation]);
@@ -106,10 +144,13 @@ class FormationclientController extends AbstractController
 
     /**
      * @param $id
+     * @param participantsRepository $rpp
+     * @param \Swift_Mailer $mailer
+     * @param $s
      * @return Response
-     * @Route ("/client/participer/{id}",name="participerf")
+     * @Route ("/client/participer/{id}/{s}",name="participerf")
      */
-    public function Participer_formation($id,participantsRepository $rpp){
+    public function Participer_formation($id,participantsRepository $rpp,\Swift_Mailer  $mailer,$s){
         $participant=new Participants();
         $idclient = $this->getDoctrine()->getRepository(Utilisateur::class)->find(3);//het lid ye l3ajngui
         $idformation = $this->getDoctrine()->getRepository(Formation::class)->find($id);
@@ -118,6 +159,16 @@ class FormationclientController extends AbstractController
         $participant->setIdclient($idclient);
        // $participant=$rpp->findBy(['idformation'=>$id]);
 
+
+        $message = (new \Swift_Message('Hello Email'))
+            ->setFrom('ghassenmechmech1@gmail.com')
+            ->setTo('ghassenmechmech1@gmail.com')
+            ->setBody("Bienvenue "." votre participation a éte enregistrer dans la formation "."'".$s."'"
+
+            );
+        $mailer->send($message);
+
+
         $em = $this->getDoctrine()->getManager();
         $em->persist($participant);
         $em->flush();
@@ -125,6 +176,11 @@ class FormationclientController extends AbstractController
         return $this->redirectToRoute('formationc');
 
     }
+
+
+
+
+
 
 
 
